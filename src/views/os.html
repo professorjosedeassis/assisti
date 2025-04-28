@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ordem de Serviço</title>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="../public/css/bootstrap.min.css">
+    <!-- CSS personalizado -->
+    <link rel="stylesheet" href="../public/css/style.css">
+    <!-- impedir a execução de scripts externos ou não autorizados -->
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'">
+</head>
+
+<body>
+    <div class="container">
+        <form class="mt-2 row g-3">
+
+            <!-- OS -->
+            <div class="col-md-4">
+                <label class="form-label">Nº OS</label>
+                <input type="text" class="form-control" id="txtOs" disabled>
+            </div>
+
+            <!-- Data -->
+            <div class="col-md-3">
+                <label class="form-label">Data</label>
+                <input type="text" class="form-control" id="txtData" disabled>
+            </div>
+
+            <!-- Buscar cliente -->
+            <div class="col-md-5">
+                <label for="inputSearchClient" class="form-label">Buscar Cliente</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="inputSearchClient" spellcheck="false" required maxlength="30">
+                    <span class="input-group-text">
+                        <img src="../public/img/search.png" alt="lupa" width="20">
+                    </span>
+                </div>
+            </div>
+
+            <!-- Nome -->
+            <div class="col-md-5">
+                <label for="inputNameClient" class="form-label">Nome</label>
+                <input type="text" class="form-control" id="inputNameClient" spellcheck="false" maxlength="30" disabled>
+            </div>
+
+            <!-- Telefone -->
+            <div class="col-md-3">
+                <label for="inputPhoneClient" class="form-label">Telefone</label>
+                <input type="text" class="form-control" id="inputPhoneClient" spellcheck="false" maxlength="15"
+                    disabled>
+            </div>
+
+            <!-- CPF -->
+            <div class="col-md-4">
+                <label for="inputCPFClient" class="form-label">CPF</label>
+                <input type="text" class="form-control" id="inputCPFClient" spellcheck="false" maxlength="15" disabled>
+            </div>
+
+            <!-- Linha -->
+            <hr class="mt-4 border border-secondary border -1">
+
+            <!-- Status -->
+            <div class="col-md-4">
+                <label class="form-label">Status da OS</label>
+                <select class="form-select" id="osStatus">
+                    <option value="">Selecione</option>
+                    <option>Aberta</option>
+                    <option>Em andamento</option>
+                    <option>Aguardando peças</option>
+                    <option>Finalizada</option>
+                    <option>Cancelada</option>
+                </select>
+            </div>
+            
+            <div class="col-md-8">
+                <label class="form-label" id="inputEquipamento">Equipamento / Modelo</label>
+                <input type="text" class="form-control" id="inputEquipamento" maxlength="30" required>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label" id="inputSerial">Número de série</label>
+                <input type="text" class="form-control" id="inputSerial" maxlength="20" >
+            </div>
+
+            <div class="col-md-9">
+                <label class="form-label" id="inputDefeito">Problema relatado</label>
+                <input type="text" class="form-control" id="inputDefeito" maxlength="80" required>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label" id="inputTecnico">Técnico</label>
+                <input type="text" class="form-control" id="inputTecnico" maxlength="20" >
+            </div>
+
+            <div class="col-md-9">
+                <label class="form-label" id="inputDiagnostico">Diagnóstico técnico</label>
+                <input type="text" class="form-control" id="inputDiagnostico" maxlength="60">
+            </div>
+            
+            <div class="col-md-9">
+                <label class="form-label" id="inputPecas">Peças</label>
+                <input type="text" class="form-control" id="inputpecas" maxlength="80">
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label" id="inputValor">Valor</label>
+                <input type="text" class="form-control" id="inputValor" maxlength="20" >
+            </div>
+
+            <div class="mt-4 d-flex justify-content-center gap-1">
+                <button type="button" class="btn btn-success">Gerar OS</button>
+                <button type="button" class="btn btn-primary">Buscar OS</button>
+                <button type="button" class="btn btn-warning">Editar OS</button>
+                <button type="button" class="btn btn-danger">Excluir OS</button>
+                <button type="button" class="btn btn-secondary">Imprimir OS</button>
+        </form>
+    </div>
+
+    <!-- Bootstrap -->
+    <script src="../public/js/bootstrap.min.js"></script>
+</body>
+
+</html>

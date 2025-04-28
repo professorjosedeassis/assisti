@@ -1,0 +1,27 @@
+{
+  "name": "assisti",
+  "version": "1.0.0",
+  "description": "Desenvolvimento de um sistema desktop para gestão de ordem de serviços de uma assistência técnica de computadores e notebooks.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/professorjosedeassis/assisti.git"
+  },
+  "author": "Professor José de Assis",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/professorjosedeassis/assisti/issues"
+  },
+  "homepage": "https://github.com/professorjosedeassis/assisti#readme",
+  "devDependencies": {
+    "electron": "^34.2.0"
+  },
+  "dependencies": {
+    "jspdf": "^3.0.1",
+    "mongoose": "^8.12.2"
+  }
+}

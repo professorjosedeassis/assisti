@@ -1,0 +1,51 @@
+@charset "utf-8";
+
+/* Botões (tela principal) */
+.button img {
+    margin: 50px 15px 25px 15px;
+    padding: 5px;
+    border: 1px solid #e8e8e8;
+    cursor: pointer;
+}
+
+/* Botão reset */
+#btnReset {
+    width: 48px;
+    height: 48px;
+    background-image: url('../img/clear.png');
+    border: none;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+/* logo */
+#logo {
+    position: fixed;
+    bottom: 40px;
+    right: 5px;
+    border: none;
+    cursor: none;
+}
+
+/* ocultar o campo id do cliente */
+#idClient {
+    display: none;
+}
+
+/* rodapé */
+footer {
+    width: 100%;
+    height: 55px;   
+    background-color: #0078d7;
+    position: fixed;
+    bottom: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px;
+}
+
+footer p {
+    color: #ffffff;
+    padding-top: 7px;
+    font-size: 1.2em;    
+}
