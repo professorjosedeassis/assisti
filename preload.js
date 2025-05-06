@@ -22,6 +22,7 @@ contextBridge.exposeInMainWorld('api', {
     setClient: (args) => ipcRenderer.on('set-client', args),
     deleteClient: (id) => ipcRenderer.send('delete-client', id),
     updateClient: (client) => ipcRenderer.send('update-client', client),
-    searchClient: () => ipcRenderer.send('search-client'),
-    listClients: (clients) => ipcRenderer.on('list-clients', clients)
+    searchClients: () => ipcRenderer.send('search-clients'),
+    listClients: (clients) => ipcRenderer.on('list-clients', clients),
+    searchOS: () => ipcRenderer.send('search-os')
 })

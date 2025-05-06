@@ -1,10 +1,11 @@
-const input = document.getElementById('inputSearchClient')
-const suggestionList = document.getElementById('suggestionList')
+// ===========================================================
+// == Busca avançada =========================================
 
+const input = document.getElementById('inputSearchClient')
+const suggestionList = document.getElementById('viewListSuggestion')
+let idClient = document.getElementById('inputIdClient')
 let nameClient = document.getElementById('inputNameClient')
 let phoneClient = document.getElementById('inputPhoneClient')
-let cpfClient = document.getElementById('inputCPFClient')
-let id = document.getElementById('idClient')
 
 let arrayClients = []
 
@@ -13,7 +14,7 @@ input.addEventListener('input', () => {
     suggestionList.innerHTML = ""   
 
     // Buscar os nomes dos clientes no banco
-    api.searchClient()
+    api.searchClients()
 
     // Listar os clientes 
     api.listClients((event, clients) => {
@@ -21,24 +22,23 @@ input.addEventListener('input', () => {
         arrayClients = listaClientes       
 
         //Filtra os clientes cujo nome (c.nomeCliente) contém o texto digitado(search)
-        const resultados = arrayClients.filter(c =>
+        const results = arrayClients.filter(c =>
             c.nomeCliente && c.nomeCliente.toLowerCase().includes(search)
         ).slice(0, 10) // máximo 10 nomes
 
         suggestionList.innerHTML = "" // limpa novamente após possível atraso
 
         // Para cada resultado, cria um item da lista
-        resultados.forEach(c => {
+        results.forEach(c => {
             const item = document.createElement('li')
             item.classList.add('list-group-item', 'list-group-item-action')
             item.textContent = c.nomeCliente
 
             // Adiciona evento de clique no ítem da lista para preencher os campos do form
             item.addEventListener('click', () => {
+                idClient.value = c._id
                 nameClient.value = c.nomeCliente
-                phoneClient.value = c.foneCliente
-                cpfClient.value = c.cpfCliente
-                id.value = c._id
+                phoneClient.value = c.foneCliente                
                 input.value = ""
                 suggestionList.innerHTML = ""
             })
@@ -56,8 +56,28 @@ document.addEventListener('click', (e) => {
     }
 })
 
-// ========================
-function searchOS() {
-    let os = prompt("Digite o número da OS:")
-    console.log(os)
+// == Fim - busca avançada =====================================
+// =============================================================
+
+
+// =============================================================
+// == Busca OS =================================================
+
+function findOS() {
+    api.searchOS()
 }
+
+// == Fim - Busca OS ===========================================
+// =============================================================
+
+
+// ============================================================
+// == Reset form ==============================================
+
+function resetForm() {
+    // Limpar os campos e resetar o formulário com as configurações pré definidas
+    location.reload()
+}
+
+// == Fim - reset form ========================================
+// ============================================================

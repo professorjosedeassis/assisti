@@ -38,7 +38,14 @@
                         <img src="../public/img/search.png" alt="lupa" width="20">
                     </span>
                 </div>
-                <ul id="suggestionList" class="list-group position-absolute w-100"></ul>
+                <!-- Lista de sugestões usando classes bootstrap -->
+                <ul id="viewListSuggestion" class="list-group position-absolute w-100"></ul>
+            </div>
+ 
+            <!-- Id -->
+            <div class="col-md-4">
+                <label for="inputIdClient" class="form-label">Id do cliente</label>
+                <input type="text" class="form-control" id="inputIdClient" spellcheck="false" maxlength="15" disabled>
             </div>
 
             <!-- Nome -->
@@ -52,13 +59,7 @@
                 <label for="inputPhoneClient" class="form-label">Telefone</label>
                 <input type="text" class="form-control" id="inputPhoneClient" spellcheck="false" maxlength="15"
                     disabled>
-            </div>
-
-            <!-- CPF -->
-            <div class="col-md-4">
-                <label for="inputCPFClient" class="form-label">CPF</label>
-                <input type="text" class="form-control" id="inputCPFClient" spellcheck="false" maxlength="15" disabled>
-            </div>
+            </div>            
 
             <input type="text" id="idClient"> <!-- oculto -->
 
@@ -115,7 +116,7 @@
 
             <div class="mt-4 d-flex justify-content-center gap-1">
                 <button type="button" class="btn btn-success">Gerar OS</button>
-                <button type="button" class="btn btn-primary" onclick="searchOS()">Buscar OS</button>
+                <button type="button" class="btn btn-primary" onclick="findOS()">Buscar OS</button>
                 <button type="button" class="btn btn-warning">Editar OS</button>
                 <button type="button" class="btn btn-danger">Excluir OS</button>
                 <button type="button" class="btn btn-secondary">Imprimir OS</button>
@@ -126,7 +127,7 @@
     <!-- Bootstrap -->
     <script src="../public/js/bootstrap.min.js"></script>
 
-    <script src="osCliente.js"></script>
+    <script src="rendererOS.js"></script>
     
 </body>
 

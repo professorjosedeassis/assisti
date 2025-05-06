@@ -17,6 +17,9 @@ const { jspdf, default: jsPDF } = require('jspdf')
 // Importação da biblioteca fs (nativa do JavaScript) para manipulação de arquivos (no caso arquivos pdf)
 const fs = require('fs')
 
+// importação do pacote electron-prompt (dialog de input) - npm i electron-prompt
+const prompt = require('electron-prompt')
+
 // Janela principal
 let win
 const createWindow = () => {
@@ -232,8 +235,16 @@ ipcMain.on('os-window', () => {
     osWindow()
 })
 
+
+
+//************************************************************/
+//***********************  Clientes  *************************/
+//************************************************************/
+
+
 // ============================================================
-// == Clientes - CRUD Create
+// == Clientes - CRUD Create ==================================
+
 // recebimento do objeto que contem os dados do cliente
 ipcMain.on('new-client', async (event, client) => {
     // Importante! Teste de recebimento dos dados do cliente
@@ -288,7 +299,7 @@ ipcMain.on('new-client', async (event, client) => {
     }
 })
 
-// == Fim - Clientes - CRUD Create
+// == Fim - Clientes - CRUD Create ============================
 // ============================================================
 
 
@@ -465,7 +476,6 @@ ipcMain.on('delete-client', async (event, id) => {
 // ============================================================
 
 
-
 // ============================================================
 // == CRUD Update =============================================
 
@@ -516,9 +526,16 @@ ipcMain.on('update-client', async (event, client) => {
 // ============================================================
 
 
+
+//************************************************************/
+//*******************  Ordem de Serviço  *********************/
+//************************************************************/
+
+
 // ============================================================
-// == Buscar cliente ==========================================
-ipcMain.on('search-client', async (event) => {
+// == Buscar cliente para vincular na OS ======================
+
+ipcMain.on('search-clients', async (event) => {
     try {
         const clients = await clientModel.find().sort({ nomeCliente: 1 })
         //console.log(clients)
@@ -527,3 +544,33 @@ ipcMain.on('search-client', async (event) => {
         console.log(error)
     }
 })
+
+// == Fim - Buscar cliente para vincular na OS ================
+// ============================================================
+
+
+// ============================================================
+// == Buscar OS ===============================================
+
+ipcMain.on('search-os', (event) => {
+    //console.log("teste: busca OS")
+    prompt({
+        title: 'Buscar OS',
+        label: 'Digite o número da OS:',
+        inputAttrs: {
+            type: 'text'
+        },
+        type: 'input',        
+        width: 400,
+        height: 200
+    }).then((result) => {
+        if (result !== null) {
+            console.log(result)
+            //buscar a os no banco pesquisando pelo valor do result (número da OS)
+
+        } 
+    })
+})
+
+// == Fim - Buscar OS =========================================
+// ============================================================
