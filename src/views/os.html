@@ -38,6 +38,7 @@
                         <img src="../public/img/search.png" alt="lupa" width="20">
                     </span>
                 </div>
+                <ul id="suggestionList" class="list-group position-absolute w-100"></ul>
             </div>
 
             <!-- Nome -->
@@ -58,6 +59,8 @@
                 <label for="inputCPFClient" class="form-label">CPF</label>
                 <input type="text" class="form-control" id="inputCPFClient" spellcheck="false" maxlength="15" disabled>
             </div>
+
+            <input type="text" id="idClient"> <!-- oculto -->
 
             <!-- Linha -->
             <hr class="mt-4 border border-secondary border -1">
@@ -112,15 +115,19 @@
 
             <div class="mt-4 d-flex justify-content-center gap-1">
                 <button type="button" class="btn btn-success">Gerar OS</button>
-                <button type="button" class="btn btn-primary">Buscar OS</button>
+                <button type="button" class="btn btn-primary" onclick="searchOS()">Buscar OS</button>
                 <button type="button" class="btn btn-warning">Editar OS</button>
                 <button type="button" class="btn btn-danger">Excluir OS</button>
                 <button type="button" class="btn btn-secondary">Imprimir OS</button>
+                <button type="reset" class="btn" id="btnReset" onclick="resetForm()"></button>
         </form>
     </div>
-
+    
     <!-- Bootstrap -->
     <script src="../public/js/bootstrap.min.js"></script>
+
+    <script src="osCliente.js"></script>
+    
 </body>
 
 </html>

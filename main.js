@@ -98,7 +98,11 @@ function osWindow() {
             // autoHideMenuBar: true,
             resizable: false,
             parent: main,
-            modal: true
+            modal: true,
+            //ativação do preload.js
+            webPreferences: {
+                preload: path.join(__dirname, 'preload.js')
+            }
         })
     }
     os.loadFile('./src/views/os.html')
@@ -510,3 +514,16 @@ ipcMain.on('update-client', async (event, client) => {
 
 // == Fim - CRUD Update =======================================
 // ============================================================
+
+
+// ============================================================
+// == Buscar cliente ==========================================
+ipcMain.on('search-client', async (event) => {
+    try {
+        const clients = await clientModel.find().sort({ nomeCliente: 1 })
+        //console.log(clients)
+        event.reply('list-clients', JSON.stringify(clients))
+    } catch (error) {
+        console.log(error)
+    }
+})
