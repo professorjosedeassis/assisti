@@ -11,6 +11,9 @@ const { conectar, desconectar } = require('./database.js')
 // Importação do Schema Clientes da camada model
 const clientModel = require('./src/models/Clientes.js')
 
+// Importação do Schema OS da camada model
+const osModel = require('./src/models/OS.js')
+
 // Importação do pacote jspdf (npm i jspdf)
 const { jspdf, default: jsPDF } = require('jspdf')
 
@@ -546,6 +549,28 @@ ipcMain.on('search-clients', async (event) => {
 })
 
 // == Fim - Buscar cliente para vincular na OS ================
+// ============================================================
+
+
+// ============================================================
+// == CRUD Create - Gerar OS ==================================
+
+// Validação de busca (preenchimento obrigatório Id Cliente-OS)
+ipcMain.on('validate-client', (event) => {
+    dialog.showMessageBox({
+        type: 'warning',
+        title: "Aviso!",
+        message: "É obrigatório vincular o cliente na Ordem de Serviço",
+        buttons: ['OK']
+    }).then((result) => {
+        //ação ao pressionar o botão (result = 0)
+        if (result.response === 0) {            
+            event.reply('set-search')
+        }
+    })
+})
+
+// == Fim - CRUD Create - Gerar OS ===========================
 // ============================================================
 
 

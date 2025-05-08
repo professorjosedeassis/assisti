@@ -11,7 +11,7 @@ let arrayClients = []
 
 input.addEventListener('input', () => {
     const search = input.value.toLowerCase() //captura o que foi digitado e converte tudo para minúsculo
-    suggestionList.innerHTML = ""   
+    suggestionList.innerHTML = ""
 
     // Buscar os nomes dos clientes no banco
     api.searchClients()
@@ -19,7 +19,7 @@ input.addEventListener('input', () => {
     // Listar os clientes 
     api.listClients((event, clients) => {
         const listaClientes = JSON.parse(clients)
-        arrayClients = listaClientes       
+        arrayClients = listaClientes
 
         //Filtra os clientes cujo nome (c.nomeCliente) contém o texto digitado(search)
         const results = arrayClients.filter(c =>
@@ -38,7 +38,7 @@ input.addEventListener('input', () => {
             item.addEventListener('click', () => {
                 idClient.value = c._id
                 nameClient.value = c.nomeCliente
-                phoneClient.value = c.foneCliente                
+                phoneClient.value = c.foneCliente
                 input.value = ""
                 suggestionList.innerHTML = ""
             })
@@ -71,6 +71,33 @@ function findOS() {
 // =============================================================
 
 
+// captura dos IDs do form OS
+let frmOS = document.getElementById('frmOS')
+
+
+// ============================================================
+// == CRUD Create/Update ======================================
+
+//Evento associado ao botão submit (uso das validações do html)
+frmOS.addEventListener('submit', async (event) => {
+    //evitar o comportamento padrão do submit que é enviar os dados do formulário e reiniciar o documento html
+    event.preventDefault()
+    // validação do campo idClient
+    if (idClient.value === "") {
+        api.validateClient()
+    } else {
+
+    }    
+})
+
+api.setSearch((args) => {
+    input.focus()
+})
+
+// == Fim CRUD Create/Update ==================================
+// ============================================================
+
+
 // ============================================================
 // == Reset form ==============================================
 
@@ -81,3 +108,5 @@ function resetForm() {
 
 // == Fim - reset form ========================================
 // ============================================================
+
+
