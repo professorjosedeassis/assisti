@@ -49,6 +49,11 @@ input.addEventListener('input', () => {
     })
 })
 
+// setar o foco no campo de busca (validação de busca do cliente obrigatória)
+api.setSearch((args) => {
+    input.focus()
+})
+
 // Ocultar lista ao clicar fora
 document.addEventListener('click', (e) => {
     if (!input.contains(e.target) && !suggestionList.contains(e.target)) {
@@ -70,6 +75,8 @@ let specialist = document.getElementById('inputSpecialist')
 let diagnosis = document.getElementById('inputDiagnosis')
 let parts = document.getElementById('inputParts')
 let total = document.getElementById('inputTotal')
+// captura da OS (CRUD Delete e Update)
+let os = document.getElementById('inputOS')
 
 
 // ============================================================
@@ -84,12 +91,15 @@ frmOS.addEventListener('submit', async (event) => {
         api.validateClient()
     } else {
         // Teste importante (recebimento dos dados do formuláro - passo 1 do fluxo)
-        console.log(idClient.value, statusOS.value, computer.value)
-    }
-})
+        console.log(os.value, idClient.value, statusOS.value, computer.value, serial.value, problem.value, specialist.value, diagnosis.value, parts.value, total.value)
+        if (os.value === "") {
+            //Gerar OS
 
-api.setSearch((args) => {
-    input.focus()
+        } else {
+            //Editar OS
+
+        }
+    }
 })
 
 // == Fim CRUD Create/Update ==================================
