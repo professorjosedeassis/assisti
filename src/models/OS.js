@@ -6,7 +6,7 @@
 // importação dos recursos do framework mongoose
 const { model, Schema } = require('mongoose')
 
-// criação da estrutura da coleção Clientes
+// criação da estrutura da coleção OS
 const osSchema = new Schema({
     dataOS: {
         type: Date,
@@ -18,7 +18,7 @@ const osSchema = new Schema({
     status: {
         type: String
     },
-    equipamento: {
+    computador: {
         type: String
     },
     serie: {

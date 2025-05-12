@@ -60,19 +60,16 @@ document.addEventListener('click', (e) => {
 // =============================================================
 
 
-// =============================================================
-// == Busca OS =================================================
-
-function findOS() {
-    api.searchOS()
-}
-
-// == Fim - Busca OS ===========================================
-// =============================================================
-
-
 // captura dos IDs do form OS
 let frmOS = document.getElementById('frmOS')
+let statusOS = document.getElementById('inputStatus')
+let computer = document.getElementById('inputComputer')
+let serial = document.getElementById('inputSerial')
+let problem = document.getElementById('inputProblem')
+let specialist = document.getElementById('inputSpecialist')
+let diagnosis = document.getElementById('inputDiagnosis')
+let parts = document.getElementById('inputParts')
+let total = document.getElementById('inputTotal')
 
 
 // ============================================================
@@ -82,12 +79,13 @@ let frmOS = document.getElementById('frmOS')
 frmOS.addEventListener('submit', async (event) => {
     //evitar o comportamento padrão do submit que é enviar os dados do formulário e reiniciar o documento html
     event.preventDefault()
-    // validação do campo idClient
+    // validação do campo obrigatório 'idClient' (validação html não funciona via html para campos desativados)
     if (idClient.value === "") {
         api.validateClient()
     } else {
-
-    }    
+        // Teste importante (recebimento dos dados do formuláro - passo 1 do fluxo)
+        console.log(idClient.value, statusOS.value, computer.value)
+    }
 })
 
 api.setSearch((args) => {
@@ -96,6 +94,17 @@ api.setSearch((args) => {
 
 // == Fim CRUD Create/Update ==================================
 // ============================================================
+
+
+// =============================================================
+// == Busca OS =================================================
+
+function findOS() {
+    api.searchOS()
+}
+
+// == Fim - Busca OS ===========================================
+// =============================================================
 
 
 // ============================================================
