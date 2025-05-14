@@ -64,6 +64,8 @@ document.addEventListener('click', (e) => {
 // == Fim - busca avançada =====================================
 // =============================================================
 
+// criar um vetor para manipulação dos dados da OS
+let arrayOS = []
 
 // captura dos IDs do form OS
 let frmOS = document.getElementById('frmOS')
@@ -75,9 +77,10 @@ let specialist = document.getElementById('inputSpecialist')
 let diagnosis = document.getElementById('inputDiagnosis')
 let parts = document.getElementById('inputParts')
 let total = document.getElementById('inputTotal')
-// captura da OS (CRUD Delete e Update)
-let os = document.getElementById('inputOS')
-
+// captura do id da OS (CRUD Delete e Update)
+let idOS = document.getElementById('inputOS')
+// captura do id do campo data
+let dateOS = document.getElementById('inputData')
 
 // ============================================================
 // == CRUD Create/Update ======================================
@@ -94,7 +97,21 @@ frmOS.addEventListener('submit', async (event) => {
         console.log(os.value, idClient.value, statusOS.value, computer.value, serial.value, problem.value, specialist.value, diagnosis.value, parts.value, total.value)
         if (os.value === "") {
             //Gerar OS
-
+            //Criar um objeto para armazenar os dados da OS antes de enviar ao main
+            const os = {
+                idClient_OS: idClient.value,
+                stat_OS: statusOS.value,
+                computer_OS: computer.value,
+                serial_OS: serial.value,
+                problem_OS: problem.value,
+                specialist_OS: specialist.value,
+                diagnosis_OS: diagnosis.value,
+                parts_OS: parts.value,
+                total_OS: total.value
+            }
+            // Enviar ao main o objeto os - (Passo 2: fluxo)
+            // uso do preload.js
+            api.newOS(os)
         } else {
             //Editar OS
 
@@ -106,15 +123,42 @@ frmOS.addEventListener('submit', async (event) => {
 // ============================================================
 
 
-// =============================================================
-// == Busca OS =================================================
+// ============================================================
+// == Buscar OS - CRUD Read ===================================
 
 function findOS() {
     api.searchOS()
 }
 
-// == Fim - Busca OS ===========================================
-// =============================================================
+api.renderOS((event, dataOS) => {
+    console.log(dataOS)
+    const os = JSON.parse(dataOS)
+    // preencher os campos com os dados da OS
+    idOS.value = os._id
+    // formatar data:
+    const data = new Date(os.dataEntrada)
+    const formatada = data.toLocaleString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+    })
+    dateOS.value = formatada
+    idClient.value = os.idCliente
+    statusOS.value = os.status
+    computer.value = os.computador
+    serial.value = os.serie
+    problem.value = os.problema
+    specialist.value = os.tecnico
+    diagnosis.value = os.diagnostico
+    parts.value = os.pecas
+    total.value = os.valor
+})
+
+// == Fim - Buscar OS - CRUD Read =============================
+// ============================================================
 
 
 // ============================================================
@@ -124,6 +168,11 @@ function resetForm() {
     // Limpar os campos e resetar o formulário com as configurações pré definidas
     location.reload()
 }
+
+// Recebimento do pedido do main para resetar o form
+api.resetForm((args) => {
+    resetForm()
+})
 
 // == Fim - reset form ========================================
 // ============================================================

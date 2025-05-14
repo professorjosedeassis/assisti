@@ -8,6 +8,9 @@ const path = require('node:path')
 // Importação dos métodos conectar e desconectar (módulo de conexão)
 const { conectar, desconectar } = require('./database.js')
 
+// importar mongoose (validação do id na OS)
+const mongoose = require('mongoose')
+
 // Importação do Schema Clientes da camada model
 const clientModel = require('./src/models/Clientes.js')
 
@@ -564,10 +567,48 @@ ipcMain.on('validate-client', (event) => {
         buttons: ['OK']
     }).then((result) => {
         //ação ao pressionar o botão (result = 0)
-        if (result.response === 0) {            
+        if (result.response === 0) {
             event.reply('set-search')
         }
     })
+})
+
+ipcMain.on('new-os', async (event, os) => {
+    //importante! teste de recebimento dos dados da os (passo 2)
+    console.log(os)
+    // Cadastrar a estrutura de dados no banco de dados MongoDB
+    try {
+        // criar uma nova de estrutura de dados usando a classe modelo. Atenção! Os atributos precisam ser idênticos ao modelo de dados OS.js e os valores são definidos pelo conteúdo do objeto os
+        const newOS = new osModel({
+            idCliente: os.idClient_OS,
+            statusOS: os.stat_OS,
+            computador: os.computer_OS,
+            serie: os.serial_OS,
+            problema: os.problem_OS,
+            tecnico: os.specialist_OS,
+            diagnostico: os.diagnosis_OS,
+            pecas: os.parts_OS,
+            valor: os.total_OS
+        })
+        // salvar os dados da OS no banco de dados
+        await newOS.save()
+        // Mensagem de confirmação
+        dialog.showMessageBox({
+            //customização
+            type: 'info',
+            title: "Aviso",
+            message: "OS gerada com sucesso",
+            buttons: ['OK']
+        }).then((result) => {
+            //ação ao pressionar o botão (result = 0)
+            if (result.response === 0) {
+                //enviar um pedido para o renderizador limpar os campos e resetar as configurações pré definidas (rótulo 'reset-form' do preload.js
+                event.reply('reset-form')
+            }
+        })
+    } catch (error) {
+        console.log(error)
+    }
 })
 
 // == Fim - CRUD Create - Gerar OS ===========================
@@ -575,27 +616,52 @@ ipcMain.on('validate-client', (event) => {
 
 
 // ============================================================
-// == Buscar OS ===============================================
+// == Buscar OS - CRUD Read ===================================
 
-ipcMain.on('search-os', (event) => {
-    //console.log("teste: busca OS")
+ipcMain.on('search-os', async (event) => {
     prompt({
         title: 'Buscar OS',
         label: 'Digite o número da OS:',
         inputAttrs: {
             type: 'text'
         },
-        type: 'input',        
+        type: 'input',
         width: 400,
         height: 200
-    }).then((result) => {
+    }).then(async (result) => {
+        // buscar OS pelo id (verificar formato usando o mongoose - importar no início do main)
         if (result !== null) {
-            console.log(result)
-            //buscar a os no banco pesquisando pelo valor do result (número da OS)
-
-        } 
+            // Verificar se o ID é válido (uso do mongoose - não esquecer de importar)
+            if (mongoose.Types.ObjectId.isValid(result)) {
+                try {
+                    const dataOS = await osModel.findById(result)
+                    if (dataOS) {
+                        console.log(dataOS) // teste importante
+                        // enviando os dados da OS ao rendererOS
+                        // OBS: IPC só trabalha com string, então é necessário converter o JSON para string JSON.stringify(dataOS)
+                        event.reply('render-os', JSON.stringify(dataOS))
+                    } else {
+                        dialog.showMessageBox({
+                            type: 'warning',
+                            title: "Aviso!",
+                            message: "OS não encontrada",
+                            buttons: ['OK']
+                        })
+                    }
+                } catch (error) {
+                    console.log(error)
+                }
+            } else {
+                dialog.showMessageBox({
+                    type: 'error',
+                    title: "Atenção!",
+                    message: "Formato do número da OS inválido.\nVerifique e tente novamente.",
+                    buttons: ['OK']
+                })
+            }
+        }
     })
 })
 
-// == Fim - Buscar OS =========================================
+// == Fim - Buscar OS - CRUD Read =============================
 // ============================================================
