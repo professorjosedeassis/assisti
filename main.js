@@ -96,12 +96,12 @@ function clientWindow() {
 }
 
 // Janela OS
-let os
+let osScreen
 function osWindow() {
     nativeTheme.themeSource = 'light'
     const main = BrowserWindow.getFocusedWindow()
     if (main) {
-        os = new BrowserWindow({
+        osScreen = new BrowserWindow({
             width: 1010,
             height: 720,
             autoHideMenuBar: true,
@@ -114,8 +114,8 @@ function osWindow() {
             }
         })
     }
-    os.loadFile('./src/views/os.html')
-    os.center()
+    osScreen.loadFile('./src/views/os.html')
+    osScreen.center()
 }
 
 // Iniciar a aplicação
@@ -665,4 +665,33 @@ ipcMain.on('search-os', async (event) => {
 })
 
 // == Fim - Buscar OS - CRUD Read =============================
+// ============================================================
+
+
+// ============================================================
+// == Excluir OS - CRUD Delete  ===============================
+
+ipcMain.on('delete-os', async (event, idOS) => {
+    console.log(idOS) // teste do passo 2 (recebimento do id)
+    try {
+        //importante - confirmar a exclusão
+        //osScreen é o nome da variável que representa a janela OS
+        const { response } = await dialog.showMessageBox(osScreen, {
+            type: 'warning',
+            title: "Atenção!",
+            message: "Deseja excluir esta ordem de serviço?\nEsta ação não poderá ser desfeita.",
+            buttons: ['Cancelar', 'Excluir'] //[0, 1]
+        })
+        if (response === 1) {
+            //console.log("teste do if de excluir")
+            //Passo 3 - Excluir o registro do cliente
+            const delOS = await osModel.findByIdAndDelete(idOS)
+            event.reply('reset-form')
+        }
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+// == Fim Excluir OS - CRUD Delete ============================
 // ============================================================

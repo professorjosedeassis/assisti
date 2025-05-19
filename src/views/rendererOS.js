@@ -64,6 +64,13 @@ document.addEventListener('click', (e) => {
 // == Fim - busca avançada =====================================
 // =============================================================
 
+// Iniciar a janela OS alterando as propriedades de alguns elementos
+document.addEventListener('DOMContentLoaded', () => {
+    // Desativar os botões
+    btnUpdate.disabled = true
+    btnDelete.disabled = true    
+})
+
 // criar um vetor para manipulação dos dados da OS
 let arrayOS = []
 
@@ -158,9 +165,26 @@ api.renderOS((event, dataOS) => {
     diagnosis.value = os.diagnostico
     parts.value = os.pecas
     total.value = os.valor
+    // desativar o botão adicionar
+    btnCreate.disabled = true
+    // ativar os botões editar e excluir
+    btnUpdate.disabled = false
+    btnDelete.disabled = false    
 })
 
 // == Fim - Buscar OS - CRUD Read =============================
+// ============================================================
+
+
+// ============================================================
+// == CRUD Delete =============================================
+
+function removeOS() {
+    console.log(idOS.value) // Passo 1 (receber do form o id da OS)
+    api.deleteOS(idOS.value) // Passo 2 (enviar o id da OS ao main)
+}
+
+// == Fim - CRUD Delete =======================================
 // ============================================================
 
 

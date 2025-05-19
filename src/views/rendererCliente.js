@@ -37,14 +37,6 @@ let arrayClient = []
 // a constante foco obtem o elemento html (input) identificado como 'searchClient'
 const foco = document.getElementById('searchClient')
 
-
-function teclaEnter(event) {
-    if (event.key === "Enter") {
-        event.preventDefault()
-        buscarCliente()
-    }
-}
-
 // Iniciar a janela de clientes alterando as propriedades de alguns elementos
 document.addEventListener('DOMContentLoaded', () => {
     // Desativar os botões
@@ -195,6 +187,8 @@ function buscarCliente() {
                 // ativar os botões editar e excluir
                 btnUpdate.disabled = false
                 btnDelete.disabled = false
+                // restaurar tecla Enter
+                restaurarEnter()
             })
         })
     }
@@ -210,7 +204,8 @@ api.setClient((args) => {
     foco.value = ""
     // preencher o campo de nome do cliente com o nome da busca
     nameClient.value = campoBusca
-
+    // restaurar tecla Enter
+    restaurarEnter()
 })
 
 // == Fim - CRUD Read =========================================
