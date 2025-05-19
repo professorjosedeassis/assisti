@@ -684,7 +684,7 @@ ipcMain.on('delete-os', async (event, idOS) => {
         })
         if (response === 1) {
             //console.log("teste do if de excluir")
-            //Passo 3 - Excluir o registro do cliente
+            //Passo 3 - Excluir a OS
             const delOS = await osModel.findByIdAndDelete(idOS)
             event.reply('reset-form')
         }
