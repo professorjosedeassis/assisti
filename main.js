@@ -80,9 +80,9 @@ function clientWindow() {
     if (main) {
         client = new BrowserWindow({
             width: 1010,
-            height: 680,
-            //autoHideMenuBar: true,
-            //resizable: false,
+            height: 600,
+            autoHideMenuBar: true,
+            resizable: false,
             parent: main,
             modal: true,
             //ativação do preload.js
@@ -104,7 +104,7 @@ function osWindow() {
         os = new BrowserWindow({
             width: 1010,
             height: 720,
-            // autoHideMenuBar: true,
+            autoHideMenuBar: true,
             resizable: false,
             parent: main,
             modal: true,
@@ -585,6 +585,7 @@ ipcMain.on('new-os', async (event, os) => {
             computador: os.computer_OS,
             serie: os.serial_OS,
             problema: os.problem_OS,
+            observacao: os.obs_OS,
             tecnico: os.specialist_OS,
             diagnostico: os.diagnosis_OS,
             pecas: os.parts_OS,

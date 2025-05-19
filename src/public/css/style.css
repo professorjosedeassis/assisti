@@ -62,11 +62,30 @@ footer p {
 }
 
 /* Dados do cliente - OS */
-#inputSearchClient, #viewListSuggestion, #inputIdClient, #inputNameClient, #inputPhoneClient {
+#inputSearchClient,
+#viewListSuggestion,
+#inputIdClient,
+#inputNameClient,
+#inputPhoneClient {
     font-size: 0.9em;
 }
 
 /* Botão Buscar OS */
 #btnBuscaOS {
-    margin-left: 50px;
+    margin-left: 370px;
+}
+
+/* Remove as setas em todos os navegadores */
+input[type=number] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+    /* Firefox */
+    -webkit-appearance: none;
+    /* Safari e Chrome */
+}
+
+/* Remove as setas do Chrome, Safari, Edge, Opera */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    display: none;
 }

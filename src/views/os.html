@@ -15,7 +15,7 @@
 
 <body>
     <div class="container">
-        <form class="mt-2 row g-3" id="frmOS">
+        <form class="mt-1 row g-3" id="frmOS">
 
             <!-- OS -->
             <div class="col-md-4">
@@ -31,9 +31,9 @@
 
             <!-- Buscar cliente -->
             <div class="col-md-5">
-               
+
             </div>
- 
+
             <!-- Buscar cliente -->
             <div class="col-md-4">
                 <label for="inputSearchClient" class="form-label">Buscar Cliente</label>
@@ -64,7 +64,7 @@
                 <label for="inputPhoneClient" class="form-label">Telefone</label>
                 <input type="text" class="form-control" id="inputPhoneClient" spellcheck="false" maxlength="15"
                     disabled>
-            </div>            
+            </div>
 
             <input type="text" id="idClient"> <!-- oculto -->
 
@@ -72,7 +72,7 @@
             <hr class="mt-4 border border-secondary border -1">
 
             <!-- Status -->
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label class="form-label">Status da OS</label>
                 <select class="form-select" id="inputStatus" required>
                     <option value="">Selecione</option>
@@ -83,29 +83,35 @@
                     <option>Cancelada</option>
                 </select>
             </div>
-            
+
             <!-- Computador -->
-            <div class="col-md-8">
+            <div class="col-md-6">
                 <label class="form-label" for="inputComputer">Computador / Notebook</label>
-                <input type="text" class="form-control" id="inputComputer" maxlength="30" required>
+                <input type="text" class="form-control" id="inputComputer" maxlength="44" required>
             </div>
 
             <!-- Número de série -->
             <div class="col-md-3">
                 <label class="form-label" for="inputSerial">Número de série</label>
-                <input type="text" class="form-control" id="inputSerial" maxlength="20" >
+                <input type="text" class="form-control" id="inputSerial" maxlength="20">
             </div>
 
             <!-- Problema relatado pelo cliente -->
-            <div class="col-md-9">
+            <div class="col-md-7">
                 <label class="form-label" for="inputProblem">Problema relatado</label>
-                <input type="text" class="form-control" id="inputProblem" maxlength="80" required>
+                <input type="text" class="form-control" id="inputProblem" maxlength="54" required>
+            </div>
+
+            <!-- Observações -->
+            <div class="col-md-5">
+                <label class="form-label" for="inputObs">Observações</label>
+                <input type="text" class="form-control" id="inputObs" maxlength="35">
             </div>
 
             <!-- Tecnico especialista -->
             <div class="col-md-3">
                 <label class="form-label" for="inputSpecialist">Técnico</label>
-                <input type="text" class="form-control" id="inputSpecialist" maxlength="20" >
+                <input type="text" class="form-control" id="inputSpecialist" maxlength="20">
             </div>
 
             <!-- Diagnóstico técnico -->
@@ -113,7 +119,7 @@
                 <label class="form-label" for="inputDiagnosis">Diagnóstico técnico</label>
                 <input type="text" class="form-control" id="inputDiagnosis" maxlength="60">
             </div>
-            
+
             <!-- Peças -->
             <div class="col-md-9">
                 <label class="form-label" for="inputParts">Peças</label>
@@ -123,24 +129,24 @@
             <!-- Valor do serviço -->
             <div class="col-md-3">
                 <label class="form-label" for="inputTotal">Valor</label>
-                <input type="text" class="form-control" id="inputTotal" maxlength="20" >
+                <input type="number" class="form-control" id="inputTotal" step="0.01" min="0">
             </div>
 
-            <div class="mt-4 d-flex justify-content-center gap-1">
-                <button type="submit" class="btn btn-success">Gerar OS</button>               
+            <div class="mt-5 d-flex justify-content-center gap-1">
+                <button type="submit" class="btn btn-success">Gerar OS</button>
                 <button type="submit" class="btn btn-warning">Editar OS</button>
                 <button type="button" class="btn btn-danger">Excluir OS</button>
-                <button type="button" class="btn btn-primary" onclick="findOS()" id="btnBuscaOS">Buscar OS</button>
-                <button type="button" class="btn btn-secondary">Imprimir OS</button>
                 <button type="reset" class="btn" id="btnReset" onclick="resetForm()"></button>
+                <button type="button" class="btn btn-primary" onclick="findOS()" id="btnBuscaOS">Buscar OS</button>
+                <button type="button" class="btn btn-secondary">Imprimir OS</button>                
         </form>
     </div>
-    
+
     <!-- Bootstrap -->
     <script src="../public/js/bootstrap.min.js"></script>
 
     <script src="rendererOS.js"></script>
-    
+
 </body>
 
 </html>

@@ -27,6 +27,9 @@ const osSchema = new Schema({
     problema: {
         type: String  
     },
+    observacao: {
+        type: String
+    },
     tecnico: {
         type: String  
     },
