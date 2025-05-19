@@ -94,8 +94,8 @@ frmOS.addEventListener('submit', async (event) => {
         api.validateClient()
     } else {
         // Teste importante (recebimento dos dados do formuláro - passo 1 do fluxo)
-        console.log(os.value, idClient.value, statusOS.value, computer.value, serial.value, problem.value, specialist.value, diagnosis.value, parts.value, total.value)
-        if (os.value === "") {
+        console.log(idOS.value, idClient.value, statusOS.value, computer.value, serial.value, problem.value, specialist.value, diagnosis.value, parts.value, total.value)
+        if (idOS.value === "") {
             //Gerar OS
             //Criar um objeto para armazenar os dados da OS antes de enviar ao main
             const os = {
@@ -147,7 +147,7 @@ api.renderOS((event, dataOS) => {
     })
     dateOS.value = formatada
     idClient.value = os.idCliente
-    statusOS.value = os.status
+    statusOS.value = os.statusOS
     computer.value = os.computador
     serial.value = os.serie
     problem.value = os.problema

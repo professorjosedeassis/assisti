@@ -15,7 +15,7 @@ const osSchema = new Schema({
     idCliente: {
         type: String,        
     },
-    status_OS: {
+    statusOS: {
         type: String
     },
     computador: {
