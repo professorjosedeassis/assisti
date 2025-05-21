@@ -188,7 +188,7 @@ function buscarCliente() {
                 btnUpdate.disabled = false
                 btnDelete.disabled = false
                 // restaurar tecla Enter
-                restaurarEnter()
+               // restaurarEnter()
             })
         })
     }
