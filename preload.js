@@ -30,5 +30,6 @@ contextBridge.exposeInMainWorld('api', {
     newOS: (os) => ipcRenderer.send('new-os', os),
     renderOS: (dataOS) => ipcRenderer.on('render-os', dataOS),
     deleteOS: (idOS) => ipcRenderer.send('delete-os', idOS),
-    updateOS: (os) => ipcRenderer.send('update-os', os)
+    updateOS: (os) => ipcRenderer.send('update-os', os),
+    printOS: () => ipcRenderer.send('print-os')
 })
