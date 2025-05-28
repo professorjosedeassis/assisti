@@ -449,24 +449,6 @@ ipcMain.on('search-name', async (event, name) => {
     }
 })
 
-ipcMain.on('search-idClient', async (event, idClient) => {
-    console.log(idClient) // teste do passo 2 (importante!)
-    // Passos 3 e 4 busca dos dados do cliente no banco
-
-    try {
-        const dataClient = await clientModel.find({
-            _id: idClient
-        })
-        console.log(dataClient) // teste passos 3 e 4 (importante!)
-
-        event.reply('render-IdClient', JSON.stringify(dataClient))
-
-    } catch (error) {
-        console.log(error)
-    }
-
-})
-
 // == Fim - CRUD Read =========================================
 // ============================================================
 
@@ -690,6 +672,25 @@ ipcMain.on('search-os', async (event) => {
             }
         }
     })
+})
+
+ipcMain.on('search-idClient', async (event, idClient) => {
+    console.log(idClient) // teste do passo 2 (importante!)
+    // Passos 3 e 4 busca dos dados do cliente no banco
+
+    try {
+        const dataClient = await clientModel.find({
+            _id: idClient
+        })
+        console.log("teste do id cliente")
+        console.log(dataClient) // teste passos 3 e 4 (importante!)
+
+        event.reply('render-idClient', JSON.stringify(dataClient))
+
+    } catch (error) {
+        console.log(error)
+    }
+
 })
 
 // == Fim - Buscar OS - CRUD Read =============================

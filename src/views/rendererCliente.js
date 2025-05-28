@@ -1,9 +1,25 @@
+//captura dos dados dos inputs do formulário (Passo 1: Fluxo)
+let frmClient = document.getElementById('frmClient')
+let nameClient = document.getElementById('inputNameClient')
+let cpfClient = document.getElementById('inputCPFClient')
+let emailClient = document.getElementById('inputEmailClient')
+let phoneClient = document.getElementById('inputPhoneClient')
+let cepClient = document.getElementById('inputCEPClient')
+let addressClient = document.getElementById('inputAddressClient')
+let numberClient = document.getElementById('inputNumberClient')
+let complementClient = document.getElementById('inputComplementClient')
+let neighborhoodClient = document.getElementById('inputNeighborhoodClient')
+let cityClient = document.getElementById('inputCityClient')
+let ufClient = document.getElementById('inputUFClient')
+// captura do id do cliente (usado no delete e update)
+let id = document.getElementById('idClient')
+
 // ============================================================
 // == Buscar CEP ==============================================
 function buscarCEP() {
     //console.log("teste do evento blur")
     //armazenar o cep digitado na variável
-    let cep = document.getElementById('inputCEPClient').value
+    let cep = cepClient.value
     //console.log(cep) //teste de recebimento do CEP
     //"consumir" a API do ViaCEP
     let urlAPI = `https://viacep.com.br/ws/${cep}/json/`
@@ -12,10 +28,10 @@ function buscarCEP() {
         .then(response => response.json())
         .then(dados => {
             //extração dos dados
-            document.getElementById('inputAddressClient').value = dados.logradouro
-            document.getElementById('inputNeighborhoodClient').value = dados.bairro
-            document.getElementById('inputCityClient').value = dados.localidade
-            document.getElementById('inputUFClient').value = dados.uf
+            addressClient.value = dados.logradouro
+            neighborhoodClient.value = dados.bairro
+            cityClient.value = dados.localidade
+            ufClient.value = dados.uf
         })
         .catch(error => console.log(error))
 }
@@ -24,9 +40,61 @@ function buscarCEP() {
 
 // ============================================================
 // == Validar CPF =============================================
-function validarCPF() {
 
+// Função para aplicar a máscara no CPF
+function aplicarMascaraCPF(cpfClient) {
+    let cpf = cpfClient.value.replace(/\D/g, "").slice(0, 11) //até 11 dígitos
+    if (cpf.length > 9) {
+        cpfClient.value = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, "$1.$2.$3-$4")
+    } else if (cpf.length > 6) {
+        cpfClient.value = cpf.replace(/(\d{3})(\d{3})(\d{1,3})/, "$1.$2.$3");
+    } else if (cpf.length > 3) {
+        cpfClient.value = cpf.replace(/(\d{3})(\d{1,3})/, "$1.$2");
+    } else {
+        cpfClient.value = cpf
+    }
 }
+
+// Função para validar CPF
+function validarCPF() {    
+    let cpf = cpfClient.value.replace(/\D/g, "")
+    // Validações: CPF inválido ou com todos os números iguais
+    if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) {
+        cpfClient.style.borderColor = "#ff0000"
+        cpfClient.style.color = "#ff0000"
+        return false
+    }
+
+    // Validação do primeiro dígito verificador
+    let soma = 0, resto
+    for (let i = 1; i <= 9; i++) soma += parseInt(cpf[i - 1]) * (11 - i);
+    resto = (soma * 10) % 11
+    if (resto !== parseInt(cpf[9])) return mostrarErro(cpfClient)
+
+    // Validação do segundo dígito verificador
+    soma = 0
+    for (let i = 1; i <= 10; i++) soma += parseInt(cpf[i - 1]) * (12 - i);
+    resto = (soma * 10) % 11
+    if (resto !== parseInt(cpf[10])) return mostrarErro(cpfClient)
+
+    cpfClient.style.borderColor = "#198754"
+    cpfClient.style.color = "#198754"
+    return true
+}
+
+// Função para exibir erro de CPF inválido
+function mostrarErro(cpfClient) {
+    cpfClient.style.borderColor = "#ff0000"
+    cpfClient.style.color = "#ff0000"
+    return false
+}
+
+// Adicionar eventos para CPF
+// Adicionar máscara ao digitar
+cpfClient.addEventListener("input", () => aplicarMascaraCPF(cpfClient))
+// Validação ao perder o foco
+cpfClient.addEventListener("blur", validarCPF)
+
 // == Fim - validar CPF =======================================
 // ============================================================
 
@@ -45,22 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Foco na busca do cliente
     foco.focus()
 })
-
-//captura dos dados dos inputs do formulário (Passo 1: Fluxo)
-let frmClient = document.getElementById('frmClient')
-let nameClient = document.getElementById('inputNameClient')
-let cpfClient = document.getElementById('inputCPFClient')
-let emailClient = document.getElementById('inputEmailClient')
-let phoneClient = document.getElementById('inputPhoneClient')
-let cepClient = document.getElementById('inputCEPClient')
-let addressClient = document.getElementById('inputAddressClient')
-let numberClient = document.getElementById('inputNumberClient')
-let complementClient = document.getElementById('inputComplementClient')
-let neighborhoodClient = document.getElementById('inputNeighborhoodClient')
-let cityClient = document.getElementById('inputCityClient')
-let ufClient = document.getElementById('inputUFClient')
-// captura do id do cliente (usado no delete e update)
-let id = document.getElementById('idClient')
 
 // ==========================================================
 // == Manipulação da tecla Enter ============================
@@ -188,7 +240,7 @@ function buscarCliente() {
                 btnUpdate.disabled = false
                 btnDelete.disabled = false
                 // restaurar tecla Enter
-               // restaurarEnter()
+                // restaurarEnter()
             })
         })
     }
