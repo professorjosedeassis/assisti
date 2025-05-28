@@ -4,6 +4,14 @@
 const input = document.getElementById('inputSearchClient')
 const suggestionList = document.getElementById('viewListSuggestion')
 let idClient = document.getElementById('inputIdClient')
+// Disparar ação de busca do nome e telefone do cliente quando o inputIdClient for preenchido (change - usado quando o campo input é desativado)
+idClient.addEventListener('change', () => {
+    if (idClient.value !== "") {
+        console.log(idClient.value)
+        api.searchIdClient(idClient.value)
+    }
+})
+
 let nameClient = document.getElementById('inputNameClient')
 let phoneClient = document.getElementById('inputPhoneClient')
 
@@ -173,6 +181,8 @@ api.renderOS((event, dataOS) => {
     })
     dateOS.value = formatada
     idClient.value = os.idCliente
+    // disparar ação de busca do cliente
+    idClient.dispatchEvent(new Event('change'))
     statusOS.value = os.statusOS
     computer.value = os.computador
     serial.value = os.serie
