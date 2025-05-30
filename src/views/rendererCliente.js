@@ -41,22 +41,8 @@ function buscarCEP() {
 // ============================================================
 // == Validar CPF =============================================
 
-// Função para aplicar a máscara no CPF
-function aplicarMascaraCPF(cpfClient) {
-    let cpf = cpfClient.value.replace(/\D/g, "").slice(0, 11) //até 11 dígitos
-    if (cpf.length > 9) {
-        cpfClient.value = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, "$1.$2.$3-$4")
-    } else if (cpf.length > 6) {
-        cpfClient.value = cpf.replace(/(\d{3})(\d{3})(\d{1,3})/, "$1.$2.$3");
-    } else if (cpf.length > 3) {
-        cpfClient.value = cpf.replace(/(\d{3})(\d{1,3})/, "$1.$2");
-    } else {
-        cpfClient.value = cpf
-    }
-}
-
 // Função para validar CPF
-function validarCPF() {    
+function validarCPF() {
     let cpf = cpfClient.value.replace(/\D/g, "")
     // Validações: CPF inválido ou com todos os números iguais
     if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) {
@@ -89,11 +75,8 @@ function mostrarErro(cpfClient) {
     return false
 }
 
-// Adicionar eventos para CPF
-// Adicionar máscara ao digitar
-cpfClient.addEventListener("input", () => aplicarMascaraCPF(cpfClient))
-// Validação ao perder o foco
-cpfClient.addEventListener("blur", validarCPF)
+// Validação (evento ) ao perder o foco
+cpfClient.addEventListener('blur', validarCPF)
 
 // == Fim - validar CPF =======================================
 // ============================================================
@@ -146,6 +129,13 @@ frmClient.addEventListener('keydown', teclaEnter)
 frmClient.addEventListener('submit', async (event) => {
     //evitar o comportamento padrão do submit que é enviar os dados do formulário e reiniciar o documento html
     event.preventDefault()
+
+    // Validação do CPF antes de continuar (adicionar ou editar)
+    if (!validarCPF()) {
+        api.validateCPF()
+        return // impede o envio se o CPF for inválido
+    }
+
     // Teste importante (recebimento dos dados do formuláro - passo 1 do fluxo)
     console.log(nameClient.value, cpfClient.value, emailClient.value, phoneClient.value, cepClient.value, addressClient.value, numberClient.value, complementClient.value, neighborhoodClient.value, cityClient.value, ufClient.value, id.value)
     if (id.value === "") {
@@ -197,8 +187,9 @@ frmClient.addEventListener('submit', async (event) => {
 
 function buscarCliente() {
     //console.log("teste do botão buscar")
-    // Passo 1: capturar o nome do cliente
-    let name = document.getElementById('searchClient').value
+    // Passo 1: capturar o nome ou cpf do cliente
+    // .trim() remove espaços antes e depois do texto
+    let name = document.getElementById('searchClient').value.trim()
     console.log(name) // teste do passo 1
 
     // validação de campo obrigatório
@@ -209,40 +200,88 @@ function buscarCliente() {
         foco.focus()
 
     } else {
-        api.searchName(name) // Passo 2: envio do nome ao main
-        // recebimento dos dados do cliente
-        api.renderClient((event, dataClient) => {
-            console.log(dataClient) // teste do passo 5
-            // passo 6 renderizar os dados do cliente no formulário
-            // - Criar um vetor global para manipulação dos dados
-            // - criar uma constante para converter os dados recebidos (string) para o formato JASON (JSON.parse)
-            // usar o laço forEach para percorre o vetor e setar os campos (caixas de texto) do formulário
-            const dadosCliente = JSON.parse(dataClient)
-            // atribuir ao vetor os dados do cliente
-            arrayClient = dadosCliente
-            // extrair os dados do cliente
-            arrayClient.forEach((c) => {
-                id.value = c._id,
-                    nameClient.value = c.nomeCliente,
-                    cpfClient.value = c.cpfCliente,
-                    emailClient.value = c.emailCliente,
-                    phoneClient.value = c.foneCliente,
-                    cepClient.value = c.cepCliente,
-                    addressClient.value = c.logradouroCliente,
-                    numberClient.value = c.numeroCliente,
-                    complementClient.value = c.complementoCliente,
-                    neighborhoodClient.value = c.bairroCliente,
-                    cityClient.value = c.cidadeCliente,
-                    ufClient.value = c.ufCliente
-                // desativar o botão adicionar
-                btnCreate.disabled = true
-                // ativar os botões editar e excluir
-                btnUpdate.disabled = false
-                btnDelete.disabled = false
-                // restaurar tecla Enter
-                // restaurarEnter()
+        // Verifica se é CPF (somente números, 11 dígitos)
+        // /^ Início da string
+        // \d	Um dígito numérico (0 a 9)
+        // {11}	Exatamente 11 repetições do que está antes (\d)
+        // $ Final da string
+        const cpfRegex = /^\d{11}$/
+
+        // Verificar se o campo de busca é um nome ou um cpf
+        if (cpfRegex.test(name)) {
+            // busca pelo cpf
+            // busca pelo nome
+            api.searchCPF(name) // Passo 2: envio do nome ao main
+            // recebimento dos dados do cliente
+            api.renderClient((event, dataClient) => {
+                console.log(dataClient) // teste do passo 5
+                // passo 6 renderizar os dados do cliente no formulário
+                // - Criar um vetor global para manipulação dos dados
+                // - criar uma constante para converter os dados recebidos (string) para o formato JASON (JSON.parse)
+                // usar o laço forEach para percorre o vetor e setar os campos (caixas de texto) do formulário
+                const dadosCliente = JSON.parse(dataClient)
+                // atribuir ao vetor os dados do cliente
+                arrayClient = dadosCliente
+                // extrair os dados do cliente
+                arrayClient.forEach((c) => {
+                    id.value = c._id,
+                        nameClient.value = c.nomeCliente,
+                        cpfClient.value = c.cpfCliente,
+                        emailClient.value = c.emailCliente,
+                        phoneClient.value = c.foneCliente,
+                        cepClient.value = c.cepCliente,
+                        addressClient.value = c.logradouroCliente,
+                        numberClient.value = c.numeroCliente,
+                        complementClient.value = c.complementoCliente,
+                        neighborhoodClient.value = c.bairroCliente,
+                        cityClient.value = c.cidadeCliente,
+                        ufClient.value = c.ufCliente
+                    // desativar o botão adicionar
+                    btnCreate.disabled = true
+                    // ativar os botões editar e excluir
+                    btnUpdate.disabled = false
+                    btnDelete.disabled = false
+                    // restaurar tecla Enter
+                    restaurarEnter()
+                })
             })
-        })
+        } else {
+            // busca pelo nome
+            api.searchName(name) // Passo 2: envio do nome ao main
+            // recebimento dos dados do cliente
+            api.renderClient((event, dataClient) => {
+                console.log(dataClient) // teste do passo 5
+                // passo 6 renderizar os dados do cliente no formulário
+                // - Criar um vetor global para manipulação dos dados
+                // - criar uma constante para converter os dados recebidos (string) para o formato JASON (JSON.parse)
+                // usar o laço forEach para percorre o vetor e setar os campos (caixas de texto) do formulário
+                const dadosCliente = JSON.parse(dataClient)
+                // atribuir ao vetor os dados do cliente
+                arrayClient = dadosCliente
+                // extrair os dados do cliente
+                arrayClient.forEach((c) => {
+                    id.value = c._id,
+                        nameClient.value = c.nomeCliente,
+                        cpfClient.value = c.cpfCliente,
+                        emailClient.value = c.emailCliente,
+                        phoneClient.value = c.foneCliente,
+                        cepClient.value = c.cepCliente,
+                        addressClient.value = c.logradouroCliente,
+                        numberClient.value = c.numeroCliente,
+                        complementClient.value = c.complementoCliente,
+                        neighborhoodClient.value = c.bairroCliente,
+                        cityClient.value = c.cidadeCliente,
+                        ufClient.value = c.ufCliente
+                    // desativar o botão adicionar
+                    btnCreate.disabled = true
+                    // ativar os botões editar e excluir
+                    btnUpdate.disabled = false
+                    btnDelete.disabled = false
+                    // restaurar tecla Enter
+                    restaurarEnter()
+                })
+            })
+        }
     }
 }
 
@@ -256,6 +295,20 @@ api.setClient((args) => {
     foco.value = ""
     // preencher o campo de nome do cliente com o nome da busca
     nameClient.value = campoBusca
+    // restaurar tecla Enter
+    restaurarEnter()
+})
+
+// setar o cpf não cadastrado (recortar do campo de busca e colar no campo cpf)
+api.setCPF((args) => {
+    // criar uma variável para armazenar o valor digitado no campo de busca (nome ou cpf)
+    let campoBusca = document.getElementById('searchClient').value
+    // foco no campo de nome do cliente
+    nameClient.focus()
+    // remover o valor digitado no campo de busca
+    foco.value = ""
+    // preencher o campo de nome do cliente com o nome da busca
+    cpfClient.value = campoBusca
     // restaurar tecla Enter
     restaurarEnter()
 })

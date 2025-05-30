@@ -186,10 +186,12 @@ const template = [
                 click: () => relatorioClientes()
             },
             {
-                label: 'OS abertas'
+                label: 'OS - Pendentes',
+                click: () => relatorioOSPendentes()
             },
             {
-                label: 'OS concluídas'
+                label: 'OS - Finalizadas',
+                click: () => relatorioOSFinalizadas()
             }
         ]
     },
@@ -250,6 +252,17 @@ ipcMain.on('os-window', () => {
 
 // ============================================================
 // == Clientes - CRUD Create ==================================
+
+// Validação do cpf
+ipcMain.on('validate-cpf', (event) => {
+    dialog.showMessageBox({
+        //customização
+        type: 'error',
+        title: "Atenção!",
+        message: "CPF inválido.",
+        buttons: ['OK']
+    })
+})
 
 // recebimento do objeto que contem os dados do cliente
 ipcMain.on('new-client', async (event, client) => {
@@ -406,6 +419,7 @@ ipcMain.on('validate-search', () => {
     })
 })
 
+// busca pelo nome
 ipcMain.on('search-name', async (event, name) => {
     //console.log("teste IPC search-name")
     //console.log(name) // teste do passo 2 (importante!)
@@ -432,6 +446,50 @@ ipcMain.on('search-name', async (event, name) => {
                 if (result.response === 0) {
                     // enviar ao renderizador um pedido para setar os campos (recortar do campo de busca e colar no campo nome)
                     event.reply('set-client')
+                } else {
+                    // limpar o formulário
+                    event.reply('reset-form')
+                }
+            })
+        }
+
+        // Passo 5:
+        // enviando os dados do cliente ao rendererCliente
+        // OBS: IPC só trabalha com string, então é necessário converter o JSON para string JSON.stringify(dataClient)
+        event.reply('render-client', JSON.stringify(dataClient))
+
+    } catch (error) {
+        console.log(error)
+    }
+})
+
+// busca pelo cpf
+ipcMain.on('search-cpf', async (event, name) => {
+    //console.log("teste IPC search-name")
+    //console.log(name) // teste do passo 2 (importante!)
+    // Passos 3 e 4 busca dos dados do cliente no banco
+    //find({nomeCliente: name}) - busca pelo nome
+    //RegExp(name, 'i') - i (insensitive / Ignorar maiúsculo ou minúsculo)
+    try {
+        const dataClient = await clientModel.find({
+            cpfCliente: name
+        })
+        console.log(dataClient) // teste passos 3 e 4 (importante!)
+
+        // melhoria da experiência do usuário (se o cliente não estiver cadastrado, alertar o usuário e questionar se ele quer cadastrar este novo cliente. Se não quiser cadastrar, limpar os campos, se quiser cadastrar recortar o nome do cliente do campo de busca e colar no campo nome)
+
+        // se o vetor estiver vazio [] (cliente não cadastrado)
+        if (dataClient.length === 0) {
+            dialog.showMessageBox({
+                type: 'warning',
+                title: "Aviso",
+                message: "Cliente não cadastrado.\nDeseja cadastrar este cliente?",
+                defaultId: 0, //botão 0
+                buttons: ['Sim', 'Não'] // [0, 1]
+            }).then((result) => {
+                if (result.response === 0) {
+                    // enviar ao renderizador um pedido para setar os campos (recortar do campo de busca e colar no campo cpf)
+                    event.reply('set-cpf')
                 } else {
                     // limpar o formulário
                     event.reply('reset-form')
@@ -941,4 +999,192 @@ O cliente autoriza a realização dos serviços técnicos descritos nesta ordem,
 }
 
 // Fim - Impressão de OS ======================================
+// ============================================================
+
+
+// ============================================================
+// == Relatório de OS pendentes ===============================
+
+async function relatorioOSPendentes() {
+    try {
+        // Passo 1: Consultar o banco de dados e obter a listagem de os pendentes por data $ne (diferente)
+        const osPendentes = await osModel.find({
+            statusOS: { $ne: "Finalizada" }
+        }).sort({ dataEntrada: 1 }) // ordena do mais antigo para o mais recente
+        // teste de recebimento da listagem 
+        console.log(osPendentes)
+        // Passo 2:Formatação do documento pdf
+        // p - portrait | l - landscape | mm e a4 (folha A4 (210x297mm))
+        const doc = new jsPDF('l', 'mm', 'a4')
+        // Inserir imagem no documento pdf
+        // imagePath (caminho da imagem que será inserida no pdf)
+        // imageBase64 (uso da biblioteca fs par ler o arquivo no formato png)
+        const imagePath = path.join(__dirname, 'src', 'public', 'img', 'logo.png')
+        const imageBase64 = fs.readFileSync(imagePath, { encoding: 'base64' })
+        doc.addImage(imageBase64, 'PNG', 5, 8) //(5mm, 8mm x,y)
+        // definir o tamanho da fonte (tamanho equivalente ao word)
+        doc.setFontSize(16)
+        // escrever um texto (título)
+        doc.text("Ordens de serviço pendentes", 14, 45)//x, y (mm)
+        // inserir a data atual no relatório
+        const dataAtual = new Date().toLocaleDateString('pt-BR')
+        doc.setFontSize(12)
+        doc.text(`Data: ${dataAtual}`, 250, 15)
+        /*
+        // variável de apoio na formatação
+        let y = 60
+        doc.text("Nome", 14, y)
+        doc.text("Telefone", 80, y)
+        doc.text("E-mail", 130, y)
+        y += 5
+        // desenhar uma linha
+        doc.setLineWidth(0.5) // expessura da linha
+        doc.line(10, y, 200, y) // 10 (inicio) ---- 200 (fim)
+
+        // renderizar os clientes cadastrados no banco
+        y += 10 // espaçamento da linha
+        // percorrer o vetor clientes(obtido do banco) usando o laço forEach (equivale ao laço for)
+        clientes.forEach((c) => {
+            // adicionar outra página se a folha inteira for preenchida (estratégia é saber o tamnaho da folha)
+            // folha A4 y = 297mm
+            if (y > 280) {
+                doc.addPage()
+                y = 20 // resetar a variável y
+                // redesenhar o cabeçalho
+                doc.text("Nome", 14, y)
+                doc.text("Telefone", 80, y)
+                doc.text("E-mail", 130, y)
+                y += 5
+                doc.setLineWidth(0.5)
+                doc.line(10, y, 200, y)
+                y += 10
+            }
+            doc.text(c.nomeCliente, 14, y),
+                doc.text(c.foneCliente, 80, y),
+                doc.text(c.emailCliente || "N/A", 130, y)
+            y += 10 //quebra de linha
+        })
+
+        // Adicionar numeração automática de páginas
+        const paginas = doc.internal.getNumberOfPages()
+        for (let i = 1; i <= paginas; i++) {
+            doc.setPage(i)
+            doc.setFontSize(10)
+            doc.text(`Página ${i} de ${paginas}`, 105, 290, { align: 'center' })
+        }
+*/
+        // Definir o caminho do arquivo temporário e nome do arquivo
+        const tempDir = app.getPath('temp')
+        const filePath = path.join(tempDir, 'os-pendentes.pdf')
+        // salvar temporariamente o arquivo
+        doc.save(filePath)
+        // abrir o arquivo no aplicativo padrão de leitura de pdf do computador do usuário
+        shell.openPath(filePath)
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+// == Fim - relatório de OS finalizada=========================
+// ============================================================
+
+
+// ============================================================
+// == Relatório de OS finalizadas =============================
+
+async function relatorioOSFinalizadas() {
+    try {
+        // Passo 1: Consultar o banco de dados e obter a listagem de os finalizadas por data
+        const osFinalizadas = await osModel.find({ statusOS: "Finalizada" }).sort({ dataEntrada: 1 })
+        // teste de recebimento da listagem de clientes
+        console.log(osFinalizadas)
+        // Passo 2:Formatação do documento pdf
+        // p - portrait | l - landscape | mm e a4 (folha A4 (210x297mm))
+        const doc = new jsPDF('l', 'mm', 'a4')
+        // Inserir imagem no documento pdf
+        // imagePath (caminho da imagem que será inserida no pdf)
+        // imageBase64 (uso da biblioteca fs par ler o arquivo no formato png)
+        const imagePath = path.join(__dirname, 'src', 'public', 'img', 'logo.png')
+        const imageBase64 = fs.readFileSync(imagePath, { encoding: 'base64' })
+        doc.addImage(imageBase64, 'PNG', 5, 8) //(5mm, 8mm x,y)
+        // definir o tamanho da fonte (tamanho equivalente ao word)
+        doc.setFontSize(16)
+
+        //doc.setTextColor('#0000FF')
+
+        // Texto que será centralizado
+        const titulo = "Ordens de serviço finalizadas"
+
+        // Obter largura da página
+        const pageWidth = doc.internal.pageSize.getWidth()
+
+        // Medir a largura do texto em pontos
+        const textWidth = doc.getTextWidth(titulo)
+
+        // Calcular posição X centralizada
+        const centerX = (pageWidth - textWidth) / 2
+
+        // Escrever o texto centralizado e azul
+        doc.text(titulo, centerX, 45)
+
+        // inserir a data atual no relatório
+        const dataAtual = new Date().toLocaleDateString('pt-BR')
+        doc.setFontSize(12)
+        doc.text(`Data: ${dataAtual}`, 250, 15)
+        /*
+        // variável de apoio na formatação
+        let y = 60
+        doc.text("Nome", 14, y)
+        doc.text("Telefone", 80, y)
+        doc.text("E-mail", 130, y)
+        y += 5
+        // desenhar uma linha
+        doc.setLineWidth(0.5) // expessura da linha
+        doc.line(10, y, 200, y) // 10 (inicio) ---- 200 (fim)
+
+        // renderizar os clientes cadastrados no banco
+        y += 10 // espaçamento da linha
+        // percorrer o vetor clientes(obtido do banco) usando o laço forEach (equivale ao laço for)
+        clientes.forEach((c) => {
+            // adicionar outra página se a folha inteira for preenchida (estratégia é saber o tamnaho da folha)
+            // folha A4 y = 297mm
+            if (y > 280) {
+                doc.addPage()
+                y = 20 // resetar a variável y
+                // redesenhar o cabeçalho
+                doc.text("Nome", 14, y)
+                doc.text("Telefone", 80, y)
+                doc.text("E-mail", 130, y)
+                y += 5
+                doc.setLineWidth(0.5)
+                doc.line(10, y, 200, y)
+                y += 10
+            }
+            doc.text(c.nomeCliente, 14, y),
+                doc.text(c.foneCliente, 80, y),
+                doc.text(c.emailCliente || "N/A", 130, y)
+            y += 10 //quebra de linha
+        })
+
+        // Adicionar numeração automática de páginas
+        const paginas = doc.internal.getNumberOfPages()
+        for (let i = 1; i <= paginas; i++) {
+            doc.setPage(i)
+            doc.setFontSize(10)
+            doc.text(`Página ${i} de ${paginas}`, 105, 290, { align: 'center' })
+        }
+*/
+        // Definir o caminho do arquivo temporário e nome do arquivo
+        const tempDir = app.getPath('temp')
+        const filePath = path.join(tempDir, 'os-finalizadas.pdf')
+        // salvar temporariamente o arquivo
+        doc.save(filePath)
+        // abrir o arquivo no aplicativo padrão de leitura de pdf do computador do usuário
+        shell.openPath(filePath)
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+// == Fim - relatório de OS finalizada=========================
 // ============================================================

@@ -32,7 +32,6 @@
     display: none;
 }
 
-
 /* rodapé */
 footer {
     width: 100%;
@@ -49,6 +48,11 @@ footer p {
     color: #ffffff;
     padding-top: 7px;
     font-size: 1.2em;
+}
+
+/* Placeholder - busca cliente*/
+#searchClient::placeholder {
+    color: #cccccc; 
 }
 
 /* Lista de sugestões OS */
