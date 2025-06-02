@@ -1,4 +1,3 @@
-//captura dos dados dos inputs do formulário (Passo 1: Fluxo)
 let frmClient = document.getElementById('frmClient')
 let nameClient = document.getElementById('inputNameClient')
 let cpfClient = document.getElementById('inputCPFClient')
@@ -11,23 +10,14 @@ let complementClient = document.getElementById('inputComplementClient')
 let neighborhoodClient = document.getElementById('inputNeighborhoodClient')
 let cityClient = document.getElementById('inputCityClient')
 let ufClient = document.getElementById('inputUFClient')
-// captura do id do cliente (usado no delete e update)
 let id = document.getElementById('idClient')
 
-// ============================================================
-// == Buscar CEP ==============================================
 function buscarCEP() {
-    //console.log("teste do evento blur")
-    //armazenar o cep digitado na variável
     let cep = cepClient.value
-    //console.log(cep) //teste de recebimento do CEP
-    //"consumir" a API do ViaCEP
     let urlAPI = `https://viacep.com.br/ws/${cep}/json/`
-    //acessando o web service par abter os dados
     fetch(urlAPI)
         .then(response => response.json())
         .then(dados => {
-            //extração dos dados
             addressClient.value = dados.logradouro
             neighborhoodClient.value = dados.bairro
             cityClient.value = dados.localidade
@@ -35,111 +25,65 @@ function buscarCEP() {
         })
         .catch(error => console.log(error))
 }
-// == Fim - buscar CEP ========================================
-// ============================================================
 
-// ============================================================
-// == Validar CPF =============================================
-
-// Função para validar CPF
 function validarCPF() {
     let cpf = cpfClient.value.replace(/\D/g, "")
-    // Validações: CPF inválido ou com todos os números iguais
     if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) {
         cpfClient.style.borderColor = "#ff0000"
         cpfClient.style.color = "#ff0000"
         return false
     }
-
-    // Validação do primeiro dígito verificador
     let soma = 0, resto
     for (let i = 1; i <= 9; i++) soma += parseInt(cpf[i - 1]) * (11 - i);
     resto = (soma * 10) % 11
     if (resto !== parseInt(cpf[9])) return mostrarErro(cpfClient)
-
-    // Validação do segundo dígito verificador
     soma = 0
     for (let i = 1; i <= 10; i++) soma += parseInt(cpf[i - 1]) * (12 - i);
     resto = (soma * 10) % 11
     if (resto !== parseInt(cpf[10])) return mostrarErro(cpfClient)
-
     cpfClient.style.borderColor = "#198754"
     cpfClient.style.color = "#198754"
     return true
 }
 
-// Função para exibir erro de CPF inválido
 function mostrarErro(cpfClient) {
     cpfClient.style.borderColor = "#ff0000"
     cpfClient.style.color = "#ff0000"
     return false
 }
 
-// Validação (evento ) ao perder o foco
 cpfClient.addEventListener('blur', validarCPF)
 
-// == Fim - validar CPF =======================================
-// ============================================================
-
-// vetor global que será usado na manipulação dos dados
 let arrayClient = []
 
-// capturar o foco na busca pelo nome do cliente
-// a constante foco obtem o elemento html (input) identificado como 'searchClient'
 const foco = document.getElementById('searchClient')
 
-// Iniciar a janela de clientes alterando as propriedades de alguns elementos
 document.addEventListener('DOMContentLoaded', () => {
-    // Desativar os botões
     btnUpdate.disabled = true
     btnDelete.disabled = true
-    // Foco na busca do cliente
     foco.focus()
 })
 
-// ==========================================================
-// == Manipulação da tecla Enter ============================
-
-// Função para manipular o evento da tecla Enter
 function teclaEnter(event) {
-    // se a tecla Enter for pressionada
     if (event.key === "Enter") {
-        event.preventDefault() // ignorar o comportamento padrão
-        // associar o Enter a busca pelo cliente
+        event.preventDefault()
         buscarCliente()
     }
 }
 
-// Função para restaurar o padrão da tecla Enter (submit)
 function restaurarEnter() {
     frmClient.removeEventListener('keydown', teclaEnter)
 }
 
-// "Escuta do evento Tecla Enter"
 frmClient.addEventListener('keydown', teclaEnter)
 
-// == Fim - manipulação tecla Enter ==========================
-// ===========================================================
-
-
-// ============================================================
-// == CRUD Create/Update ======================================
-
-//Evento associado ao botão submit (uso das validações do html)
 frmClient.addEventListener('submit', async (event) => {
-    //evitar o comportamento padrão do submit que é enviar os dados do formulário e reiniciar o documento html
     event.preventDefault()
-
-    // Validação do CPF antes de continuar (adicionar ou editar)
     if (!validarCPF()) {
         api.validateCPF()
-        return // impede o envio se o CPF for inválido
+        return
     }
-
-    // Teste importante (recebimento dos dados do formuláro - passo 1 do fluxo)
-    console.log(nameClient.value, cpfClient.value, emailClient.value, phoneClient.value, cepClient.value, addressClient.value, numberClient.value, complementClient.value, neighborhoodClient.value, cityClient.value, ufClient.value, id.value)
     if (id.value === "") {
-        //Criar um objeto para armazenar os dados do cliente antes de enviar ao main
         const client = {
             nameCli: nameClient.value,
             cpfCli: cpfClient.value,
@@ -153,11 +97,8 @@ frmClient.addEventListener('submit', async (event) => {
             cityCli: cityClient.value,
             ufCli: ufClient.value
         }
-        // Enviar ao main o objeto client - (Passo 2: fluxo)
-        // uso do preload.js
         api.newClient(client)
     } else {
-        //Criar um objeto para armazenar os dados do cliente antes de enviar ao main (o dev não sabe os dados que serão alterados, portanto enviar todos os dados)
         const client = {
             idCli: id.value,
             nameCli: nameClient.value,
@@ -172,57 +113,22 @@ frmClient.addEventListener('submit', async (event) => {
             cityCli: cityClient.value,
             ufCli: ufClient.value
         }
-        // Enviar ao main o objeto client - (Passo 2: fluxo)
-        // uso do preload.js
         api.updateClient(client)
     }
 })
 
-// == Fim CRUD Create/Update ==================================
-// ============================================================
-
-
-// ============================================================
-// == CRUD Read ===============================================
-
 function buscarCliente() {
-    //console.log("teste do botão buscar")
-    // Passo 1: capturar o nome ou cpf do cliente
-    // .trim() remove espaços antes e depois do texto
     let name = document.getElementById('searchClient').value.trim()
-    console.log(name) // teste do passo 1
-
-    // validação de campo obrigatório
-    // se o campo de busca não foi preenchido
     if (name === "") {
-        // enviar ao main um pedido para alertar o usuário
         api.validateSearch()
         foco.focus()
-
     } else {
-        // Verifica se é CPF (somente números, 11 dígitos)
-        // /^ Início da string
-        // \d	Um dígito numérico (0 a 9)
-        // {11}	Exatamente 11 repetições do que está antes (\d)
-        // $ Final da string
         const cpfRegex = /^\d{11}$/
-
-        // Verificar se o campo de busca é um nome ou um cpf
         if (cpfRegex.test(name)) {
-            // busca pelo cpf
-            // busca pelo nome
-            api.searchCPF(name) // Passo 2: envio do nome ao main
-            // recebimento dos dados do cliente
+            api.searchCPF(name)
             api.renderClient((event, dataClient) => {
-                console.log(dataClient) // teste do passo 5
-                // passo 6 renderizar os dados do cliente no formulário
-                // - Criar um vetor global para manipulação dos dados
-                // - criar uma constante para converter os dados recebidos (string) para o formato JASON (JSON.parse)
-                // usar o laço forEach para percorre o vetor e setar os campos (caixas de texto) do formulário
                 const dadosCliente = JSON.parse(dataClient)
-                // atribuir ao vetor os dados do cliente
                 arrayClient = dadosCliente
-                // extrair os dados do cliente
                 arrayClient.forEach((c) => {
                     id.value = c._id,
                         nameClient.value = c.nomeCliente,
@@ -236,29 +142,18 @@ function buscarCliente() {
                         neighborhoodClient.value = c.bairroCliente,
                         cityClient.value = c.cidadeCliente,
                         ufClient.value = c.ufCliente
-                    // desativar o botão adicionar
                     btnCreate.disabled = true
-                    // ativar os botões editar e excluir
                     btnUpdate.disabled = false
                     btnDelete.disabled = false
-                    // restaurar tecla Enter
                     restaurarEnter()
                 })
             })
         } else {
-            // busca pelo nome
-            api.searchName(name) // Passo 2: envio do nome ao main
-            // recebimento dos dados do cliente
+
+            api.searchName(name)
             api.renderClient((event, dataClient) => {
-                console.log(dataClient) // teste do passo 5
-                // passo 6 renderizar os dados do cliente no formulário
-                // - Criar um vetor global para manipulação dos dados
-                // - criar uma constante para converter os dados recebidos (string) para o formato JASON (JSON.parse)
-                // usar o laço forEach para percorre o vetor e setar os campos (caixas de texto) do formulário
                 const dadosCliente = JSON.parse(dataClient)
-                // atribuir ao vetor os dados do cliente
                 arrayClient = dadosCliente
-                // extrair os dados do cliente
                 arrayClient.forEach((c) => {
                     id.value = c._id,
                         nameClient.value = c.nomeCliente,
@@ -272,12 +167,9 @@ function buscarCliente() {
                         neighborhoodClient.value = c.bairroCliente,
                         cityClient.value = c.cidadeCliente,
                         ufClient.value = c.ufCliente
-                    // desativar o botão adicionar
                     btnCreate.disabled = true
-                    // ativar os botões editar e excluir
                     btnUpdate.disabled = false
                     btnDelete.disabled = false
-                    // restaurar tecla Enter
                     restaurarEnter()
                 })
             })
@@ -285,61 +177,30 @@ function buscarCliente() {
     }
 }
 
-// setar o cliente não cadastrado (recortar do campo de busca e colar no campo nome)
 api.setClient((args) => {
-    // criar uma variável para armazenar o valor digitado no campo de busca (nome ou cpf)
     let campoBusca = document.getElementById('searchClient').value
-    // foco no campo de nome do cliente
     nameClient.focus()
-    // remover o valor digitado no campo de busca
     foco.value = ""
-    // preencher o campo de nome do cliente com o nome da busca
     nameClient.value = campoBusca
-    // restaurar tecla Enter
     restaurarEnter()
 })
 
-// setar o cpf não cadastrado (recortar do campo de busca e colar no campo cpf)
 api.setCPF((args) => {
-    // criar uma variável para armazenar o valor digitado no campo de busca (nome ou cpf)
     let campoBusca = document.getElementById('searchClient').value
-    // foco no campo de nome do cliente
     nameClient.focus()
-    // remover o valor digitado no campo de busca
     foco.value = ""
-    // preencher o campo de nome do cliente com o nome da busca
     cpfClient.value = campoBusca
-    // restaurar tecla Enter
     restaurarEnter()
 })
-
-// == Fim - CRUD Read =========================================
-// ============================================================
-
-
-// ============================================================
-// == CRUD Delete =============================================
 
 function excluirCliente() {
-    console.log(id.value) // Passo 1 (receber do form o id)
-    api.deleteClient(id.value) // Passo 2 (enviar o id ao main)
+    api.deleteClient(id.value)
 }
 
-// == Fim - CRUD Delete =======================================
-// ============================================================
-
-
-// ============================================================
-// == Reset form ==============================================
 function resetForm() {
-    // Limpar os campos e resetar o formulário com as configurações pré definidas
     location.reload()
 }
 
-// Recebimento do pedido do main para resetar o form
 api.resetForm((args) => {
     resetForm()
 })
-
-// == Fim - reset form ========================================
-// ============================================================

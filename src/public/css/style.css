@@ -1,6 +1,5 @@
 @charset "utf-8";
 
-/* Botões (tela principal) */
 .button img {
     margin: 50px 15px 25px 15px;
     padding: 5px;
@@ -8,7 +7,6 @@
     cursor: pointer;
 }
 
-/* Botão reset */
 #btnReset {
     width: 48px;
     height: 48px;
@@ -18,7 +16,6 @@
     margin-left: 10px;
 }
 
-/* logo */
 #logo {
     position: fixed;
     bottom: 40px;
@@ -27,12 +24,10 @@
     cursor: none;
 }
 
-/* ocultar o campo id do cliente */
 #idClient {
     display: none;
 }
 
-/* rodapé */
 footer {
     width: 100%;
     height: 55px;
@@ -50,12 +45,10 @@ footer p {
     font-size: 1.2em;
 }
 
-/* Placeholder - busca cliente*/
 #searchClient::placeholder {
-    color: #cccccc; 
+    color: #cccccc;
 }
 
-/* Lista de sugestões OS */
 #viewListSuggestion {
     z-index: 2;
     max-width: 301px;
@@ -65,7 +58,6 @@ footer p {
     background-color: #E0F0FF;
 }
 
-/* Dados do cliente - OS */
 #inputSearchClient,
 #viewListSuggestion,
 #inputIdClient,
@@ -74,21 +66,16 @@ footer p {
     font-size: 0.9em;
 }
 
-/* Botão Buscar OS */
 #btnBuscaOS {
     margin-left: 370px;
 }
 
-/* Remove as setas em todos os navegadores */
 input[type=number] {
     appearance: textfield;
     -moz-appearance: textfield;
-    /* Firefox */
     -webkit-appearance: none;
-    /* Safari e Chrome */
 }
 
-/* Remove as setas do Chrome, Safari, Edge, Opera */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     display: none;

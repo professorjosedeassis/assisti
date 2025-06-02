@@ -4,8 +4,10 @@
   "description": "Desenvolvimento de um sistema desktop para gestão de ordem de serviços de uma assistência técnica de computadores e notebooks.",
   "main": "main.js",
   "scripts": {
-    "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "electron-forge start",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
   "repository": {
     "type": "git",
@@ -18,10 +20,19 @@
   },
   "homepage": "https://github.com/professorjosedeassis/assisti#readme",
   "devDependencies": {
+    "@electron-forge/cli": "^7.8.1",
+    "@electron-forge/maker-deb": "^7.8.1",
+    "@electron-forge/maker-rpm": "^7.8.1",
+    "@electron-forge/maker-squirrel": "^7.8.1",
+    "@electron-forge/maker-zip": "^7.8.1",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.8.1",
+    "@electron-forge/plugin-fuses": "^7.8.1",
+    "@electron/fuses": "^1.8.0",
     "electron": "^34.2.0"
   },
   "dependencies": {
     "electron-prompt": "^1.7.0",
+    "electron-squirrel-startup": "^1.0.1",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.5.25",
     "mongoose": "^8.12.2"
